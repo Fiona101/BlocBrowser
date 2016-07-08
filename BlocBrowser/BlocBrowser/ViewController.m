@@ -131,6 +131,15 @@
     
     NSString *URLString = textField.text;
     
+    if ([URLString containsString:@" "]) {
+        // Replace spaces with +
+        
+        URLString = [URLString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+        
+        // Add google url at beginning
+        URLString = [NSString stringWithFormat:@"http://www.google.com/search?q=%@", URLString];
+    }
+    
     NSURL *URL = [NSURL URLWithString:URLString];
     
     if (!URL.scheme) {
