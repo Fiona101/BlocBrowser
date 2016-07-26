@@ -119,6 +119,23 @@
         currentButtonX += buttonWidth;
         
     }
+    
+    /*/ adding in the welcome message - assignment 24 /*/
+    
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Welcome"
+                                                                   message:@"This is a privacy conscious browser and your history will be deleted automatically"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:defaultAction];
+    [self presentViewController:alert animated:YES completion:nil];
+    
+    
+   /*/ end of welcome message /*/
+    
+    
 }
 
 #pragma mark - UITextFieldDelegate
@@ -147,6 +164,7 @@
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
     [self updateButtonsAndTitle];
+
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
