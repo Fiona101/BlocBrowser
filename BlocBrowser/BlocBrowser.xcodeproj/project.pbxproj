@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0473CE8F1D47858000AADD17 /* AwesomeFloatingToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 0473CE8E1D47858000AADD17 /* AwesomeFloatingToolbar.m */; };
 		04D444521D2D6E61009443AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D444511D2D6E61009443AA /* main.m */; };
 		04D444551D2D6E61009443AA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D444541D2D6E61009443AA /* AppDelegate.m */; };
 		04D444581D2D6E61009443AA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D444571D2D6E61009443AA /* ViewController.m */; };
@@ -15,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0473CE8D1D47858000AADD17 /* AwesomeFloatingToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AwesomeFloatingToolbar.h; sourceTree = "<group>"; };
+		0473CE8E1D47858000AADD17 /* AwesomeFloatingToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AwesomeFloatingToolbar.m; sourceTree = "<group>"; };
 		04D4444D1D2D6E61009443AA /* BlocBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlocBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04D444511D2D6E61009443AA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		04D444531D2D6E61009443AA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -64,6 +67,8 @@
 				04D4445E1D2D6E61009443AA /* LaunchScreen.storyboard */,
 				04D444611D2D6E61009443AA /* Info.plist */,
 				04D444501D2D6E61009443AA /* Supporting Files */,
+				0473CE8D1D47858000AADD17 /* AwesomeFloatingToolbar.h */,
+				0473CE8E1D47858000AADD17 /* AwesomeFloatingToolbar.m */,
 			);
 			path = BlocBrowser;
 			sourceTree = "<group>";
@@ -149,6 +154,7 @@
 				04D444581D2D6E61009443AA /* ViewController.m in Sources */,
 				04D444551D2D6E61009443AA /* AppDelegate.m in Sources */,
 				04D444521D2D6E61009443AA /* main.m in Sources */,
+				0473CE8F1D47858000AADD17 /* AwesomeFloatingToolbar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +295,7 @@
 				04D444661D2D6E61009443AA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
