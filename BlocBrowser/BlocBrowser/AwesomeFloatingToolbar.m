@@ -14,6 +14,8 @@
 @property (nonatomic, strong) NSArray *colors;
 @property (nonatomic, strong) NSArray *labels;
 @property (nonatomic, weak) UILabel *currentLabel;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 
 @end
 
@@ -58,6 +60,16 @@
         for (UILabel *thisLabel in self.labels) {
             [self addSubview:thisLabel];
         }
+    
+        // #1 this tells the gesture recognizer which method to call when a tap is detected via tapFired:
+        self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
+        // #2 this tells the view (self) to route touch events through this gesture recognizer
+        [self addGestureRecognizer:self.tapGesture];
+        
+        self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
+        [self addGestureRecognizer:self.panGesture];
+        
+        
     }
     
     return self;
@@ -112,44 +124,46 @@
         }
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    UILabel *label = [self labelFromTouches:touches withEvent:event];
+- (void) tapFired:(UITapGestureRecognizer *)recognizer {
     
-    self.currentLabel = label;
-    self.currentLabel.alpha = 0.5;
-}
-
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    UILabel *label = [self labelFromTouches:touches withEvent:event];
-    
-    if (self.currentLabel != label) {
-        // The label being touched is no longer the initial label
-        self.currentLabel.alpha = 1;
-    } else {
-        // The label being touched is the initial label
-        self.currentLabel.alpha = 0.5;
-    }
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    UILabel *label = [self labelFromTouches:touches withEvent:event];
-    
-    if (self.currentLabel == label) {
-        NSLog(@"Label tapped: %@", self.currentLabel.text);
+        if (recognizer.state == UIGestureRecognizerStateRecognized) { // #3 checks for the proper state of the gesture recognizer and UIGestureRecognizerStateRecognized is the state in which the type of gesture it recognizes has been detected. In our case a tap has been completed and the recognizer's state was switched to UIGestureRecognizerStateRecognized. If the gesture recognizer is in any other state the gesture hasn't been detected.
         
-        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
-            [self.delegate floatingToolbar:self didSelectButtonWithTitle:self.currentLabel.text];
+            CGPoint location = [recognizer locationInView:self]; // #4 calculates and stores an x-y co-ordinate of the gesture's location with respect to self's bounds so for eg a tap in the top left corner will register as (0,0).
+        
+            UIView *tappedView = [self hitTest:location withEvent:nil]; // #5 here we invoke hitTest:withEvent: to determine which view received the tap.
+        
+        if ([self.labels containsObject:tappedView]) { // #6 to check if the view that was tapped was in fact one of our toolbar labels and if so to verify our delegate for compatability before performing the appropriate method call.
+            
+            if ([self.delegate respondsToSelector:@selector(floatingToolbar:didSelectButtonWithTitle:)]) {
+                
+                [self.delegate floatingToolbar:self didSelectButtonWithTitle:((UILabel *)tappedView).text];
+            }
         }
     }
-    
-    self.currentLabel.alpha = 1;
-    self.currentLabel = nil;
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-    self.currentLabel.alpha = 1;
-    self.currentLabel = nil;
+
+- (void) panFired:(UIPanGestureRecognizer *)recognizer {
+    
+        if (recognizer.state == UIGestureRecognizerStateChanged) {
+        
+            CGPoint translation = [recognizer translationInView:self];
+        
+            NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
+        
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPanWithOffset:)]) {
+            
+            [self.delegate floatingToolbar:self didTryToPanWithOffset:translation];
+        }
+        
+            [recognizer setTranslation:CGPointZero inView:self];
+        }
 }
+
+
+
+
+
 
 
 #pragma mark - Button Enabling
