@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-
 @class AwesomeFloatingToolbar;
 
 @protocol AwesomeFloatingToolbarDelegate <NSObject>
@@ -21,6 +20,8 @@
 // the below delegate method will indicate that AwesomeFloatingToolbar wishes to be moved and the direction it wishes to be moved in. Its delegate (the view controller) can decide whether to actually move the toolbar or not
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset;
+
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchWithOffset:(CGPoint)offset;
 
 @end
 

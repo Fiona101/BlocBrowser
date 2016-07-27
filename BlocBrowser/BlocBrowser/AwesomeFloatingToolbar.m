@@ -16,6 +16,7 @@
 @property (nonatomic, weak) UILabel *currentLabel;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
 
 @end
 
@@ -68,7 +69,10 @@
         
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
         [self addGestureRecognizer:self.panGesture];
-        
+       
+        // pinch gesture add in for assignment 26
+        self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
+        [self addGestureRecognizer:self.pinchGesture];
         
     }
     
@@ -150,21 +154,38 @@
             CGPoint translation = [recognizer translationInView:self];
         
             NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
+            
         
         if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPanWithOffset:)]) {
             
             [self.delegate floatingToolbar:self didTryToPanWithOffset:translation];
         }
-        
+    
             [recognizer setTranslation:CGPointZero inView:self];
         }
 }
 
 
+- (void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
+    
+        if (recognizer.state == UIGestureRecognizerStateChanged) {
+        
+            CGPoint translation = [recognizer translationInView:self];
+        
+            NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
+            
+            
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPinchWithOffset:)]) {
+        
+            [self.delegate floatingToolbar:self didTryToPinchWithOffset:translation];
+        
+        }
+    
+            [recognizer setTranslation:CGPointZero inView:self];
+    
+        }
 
-
-
-
+}
 
 #pragma mark - Button Enabling
 
@@ -177,6 +198,8 @@
         label.userInteractionEnabled = enabled;
         label.alpha = enabled ? 1.0 : 0.25;
     }
+    
 }
-@end
 
+
+@end
