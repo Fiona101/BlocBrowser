@@ -21,7 +21,10 @@
 
 - (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset;
 
-- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchWithOffset:(CGPoint)offset;
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchWithScale:(CGFloat)scale;
+
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToLongPress:(BOOL)ignoreThis;
+
 
 @end
 
@@ -29,7 +32,7 @@
 @interface AwesomeFloatingToolbar : UIView
 
 - (instancetype) initWithFourTitles:(NSArray *)titles;
-
+- (void) rotateColors;
 - (void) setEnabled:(BOOL)enabled forButtonWithTitle:(NSString *)title;
 
 @property (nonatomic, weak) id <AwesomeFloatingToolbarDelegate> delegate;

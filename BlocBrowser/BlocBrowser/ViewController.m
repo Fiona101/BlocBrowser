@@ -10,6 +10,8 @@
 #import "ViewController.h"
 #import <WebKit/WebKit.h>
 #import "AwesomeFloatingToolbar.h"
+@import CoreFoundation;
+
 
 #define kWebBrowserBackString NSLocalizedString(@"Back", @"Back command")
 #define kWebBrowserForwardString NSLocalizedString(@"Forward", @"Forward command")
@@ -24,6 +26,8 @@
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicator;
 @property (nonatomic, strong) AwesomeFloatingToolbar *awesomeToolbar;
 @property (nonatomic, assign) NSUInteger frameCount;
+@property(nonatomic) CGFloat scale;
+@property(nonatomic) CFTimeInterval minimumPressDuration;
 
 @end
 
@@ -64,6 +68,8 @@
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.activityIndicator];
+    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 60);
+
 
 }
 
@@ -82,7 +88,6 @@
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight);
     
-    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 60);
     
 }
 
@@ -231,19 +236,25 @@
 }
 
 
-- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchWithOffset:(CGPoint)offset {
+
+- (void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToPinchWithScale:(CGFloat)scale {
+
+    CGAffineTransform previousTransform = toolbar.transform;
     
-    CGPoint startingPoint = toolbar.frame.origin;
-    
-    CGPoint newPoint = CGPointMake(startingPoint.x + offset.x, startingPoint.y + offset.y);
-    
-    CGRect potentialNewFrame = CGRectMake(newPoint.x, newPoint.y, CGRectGetWidth(toolbar.frame), CGRectGetHeight(toolbar.frame));
-    
-    if (CGRectContainsRect(self.view.bounds, potentialNewFrame)) {
-        
-        toolbar.frame = potentialNewFrame;
+    toolbar.transform = CGAffineTransformScale(toolbar.transform, scale, scale);
+
+    if (! CGRectContainsRect(self.view.bounds, toolbar.frame)) {
+        toolbar.transform = previousTransform;
     }
+
+    
 }
+
+    
+- (void)floatingToolbar:(AwesomeFloatingToolbar *)toolbar didTryToLongPress:(BOOL)ignoreThis {
+    [toolbar rotateColors];
+}
+
 
 
 @end

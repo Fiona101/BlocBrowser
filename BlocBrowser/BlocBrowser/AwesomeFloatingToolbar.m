@@ -17,6 +17,8 @@
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
+@property(nonatomic) UILongPressGestureRecognizer *longPressGesture;
+@property (nonatomic) NSInteger offset;
 
 @end
 
@@ -47,6 +49,7 @@
             NSString *titleForThisLabel = [self.currentTitles objectAtIndex:currentTitleIndex];
             UIColor *colorForThisLabel = [self.colors objectAtIndex:currentTitleIndex];
             
+            
             label.textAlignment = NSTextAlignmentCenter;
             label.font = [UIFont systemFontOfSize:10];
             label.text = titleForThisLabel;
@@ -74,9 +77,18 @@
         self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
         [self addGestureRecognizer:self.pinchGesture];
         
+        self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressFired:)];
+        [self addGestureRecognizer:self.longPressGesture];
+        
+        // assignment 26 to make the background colours rotate
+        
+        
+        self.labels = labelsArray;
+        self.offset = 0;
     }
-    
+   
     return self;
+        
 }
 
 - (void) layoutSubviews {
@@ -128,7 +140,7 @@
         }
 }
 
-- (void) tapFired:(UITapGestureRecognizer *)recognizer {
+- (IBAction) tapFired:(UITapGestureRecognizer *)recognizer {
     
         if (recognizer.state == UIGestureRecognizerStateRecognized) { // #3 checks for the proper state of the gesture recognizer and UIGestureRecognizerStateRecognized is the state in which the type of gesture it recognizes has been detected. In our case a tap has been completed and the recognizer's state was switched to UIGestureRecognizerStateRecognized. If the gesture recognizer is in any other state the gesture hasn't been detected.
         
@@ -147,7 +159,7 @@
 }
 
 
-- (void) panFired:(UIPanGestureRecognizer *)recognizer {
+- (IBAction) panFired:(UIPanGestureRecognizer *)recognizer {
     
         if (recognizer.state == UIGestureRecognizerStateChanged) {
         
@@ -166,25 +178,61 @@
 }
 
 
-- (void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
-    
-        if (recognizer.state == UIGestureRecognizerStateChanged) {
-        
-            CGPoint translation = [recognizer translationInView:self];
-        
-            NSLog(@"New translation: %@", NSStringFromCGPoint(translation));
-            
-            
-        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPinchWithOffset:)]) {
-        
-            [self.delegate floatingToolbar:self didTryToPinchWithOffset:translation];
-        
-        }
-    
-            [recognizer setTranslation:CGPointZero inView:self];
-    
-        }
 
+- (IBAction) pinchFired:(UIPinchGestureRecognizer *)recognizer {
+    CGFloat scale = 1.0;
+
+    if (recognizer.state == UIGestureRecognizerStateChanged) {
+
+        scale = [recognizer scale];
+        NSLog(@"New scale: %f", scale);
+
+        if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToPinchWithScale:)]) {
+        
+            [self.delegate floatingToolbar:self didTryToPinchWithScale:scale];
+        
+        }
+    
+        [recognizer setScale:1.0];
+    }
+}
+
+
+// start of longpress method
+
+- (IBAction) longPressFired:(UILongPressGestureRecognizer *)recognizer {
+    
+    if (recognizer.state == UIGestureRecognizerStateRecognized) { // #3 checks for the proper state of the gesture recognizer and UIGestureRecognizerStateRecognized is the state in which the type of gesture it recognizes has been detected. In our case a tap has been completed and the recognizer's state was switched to UIGestureRecognizerStateRecognized. If the gesture recognizer is in any other state the gesture hasn't been detected.
+        
+        CGPoint location = [recognizer locationInView:self]; // #4 calculates and stores an x-y co-ordinate of the gesture's location with respect to self's bounds so for eg a tap in the top left corner will register as (0,0).
+        
+        UIView *tappedView = [self hitTest:location withEvent:nil]; // #5 here we invoke hitTest:withEvent: to determine which view received the tap.
+        
+        if ([self.labels containsObject:tappedView] || tappedView == self) { // #6 to check if the view that was tapped was in fact one of our toolbar labels and if so to verify our delegate for compatability before performing the appropriate method call.
+            
+            
+            if ([self.delegate respondsToSelector:@selector(floatingToolbar:didTryToLongPress:)]) {
+                
+                [self.delegate floatingToolbar:self didTryToLongPress:YES];
+            }
+            
+        }
+    
+        
+    }
+}
+
+    
+    
+- (void)rotateColors {
+    self.offset = self.offset + 1;
+    
+    for (UILabel *thisLabel in self.labels) {
+        NSInteger labelNumber = [self.labels indexOfObject:thisLabel];
+        thisLabel.backgroundColor = self.colors[(labelNumber + self.offset)%4];
+        
+    }
+    
 }
 
 #pragma mark - Button Enabling
